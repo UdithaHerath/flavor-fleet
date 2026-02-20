@@ -1,8 +1,41 @@
 import { X, Plus, Minus, Trash2 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { useCart } from "@/context/CartContext";
+import { useAuth } from "@/context/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
+import { useState } from "react";
 
 const CartDrawer = () => {
   const { items, isOpen, setIsOpen, total, updateQuantity, removeItem, clearCart } = useCart();
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  const { toast } = useToast();
+  const [placing, setPlacing] = useState(false);
+
+  const handlePlaceOrder = async () => {
+    if (!user) {
+      setIsOpen(false);
+      navigate("/auth");
+      return;
+    }
+    setPlacing(true);
+    const { error } = await supabase.from("orders").insert({
+      user_id: user.id,
+      items: JSON.parse(JSON.stringify(items)),
+      subtotal: total,
+      delivery_fee: 2.99,
+      total: total + 2.99,
+    });
+    setPlacing(false);
+    if (error) {
+      toast({ title: "Error", description: error.message, variant: "destructive" });
+    } else {
+      clearCart();
+      setIsOpen(false);
+      toast({ title: "Order placed!", description: "Your food is on the way 🎉" });
+    }
+  };
 
   if (!isOpen) return null;
 
@@ -62,8 +95,12 @@ const CartDrawer = () => {
                 <span>Total</span>
                 <span className="text-primary">${(total + 2.99).toFixed(2)}</span>
               </div>
-              <button className="w-full bg-primary text-primary-foreground py-3.5 rounded-full font-semibold hover:opacity-90 transition-opacity">
-                Place Order
+              <button
+                onClick={handlePlaceOrder}
+                disabled={placing}
+                className="w-full bg-primary text-primary-foreground py-3.5 rounded-full font-semibold hover:opacity-90 transition-opacity disabled:opacity-50"
+              >
+                {placing ? "Placing..." : user ? "Place Order" : "Sign in to Order"}
               </button>
               <button onClick={clearCart} className="w-full text-sm text-muted-foreground hover:text-destructive transition-colors">
                 Clear cart

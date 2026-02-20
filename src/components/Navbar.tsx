@@ -1,9 +1,11 @@
 import { Link } from "react-router-dom";
-import { MapPin, ShoppingBag } from "lucide-react";
+import { MapPin, ShoppingBag, User, LogOut } from "lucide-react";
 import { useCart } from "@/context/CartContext";
+import { useAuth } from "@/context/AuthContext";
 
 const Navbar = () => {
   const { itemCount, setIsOpen } = useCart();
+  const { user, signOut } = useAuth();
 
   return (
     <nav className="sticky top-0 z-50 bg-background/90 backdrop-blur-md border-b border-border">
@@ -18,18 +20,45 @@ const Navbar = () => {
           <span className="font-medium text-foreground">Current Location</span>
         </div>
 
-        <button
-          onClick={() => setIsOpen(true)}
-          className="relative flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-full font-medium text-sm hover:opacity-90 transition-opacity"
-        >
-          <ShoppingBag className="h-4 w-4" />
-          <span>Cart</span>
-          {itemCount > 0 && (
-            <span className="absolute -top-1.5 -right-1.5 bg-accent text-accent-foreground text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
-              {itemCount}
-            </span>
+        <div className="flex items-center gap-3">
+          {user ? (
+            <>
+              <Link
+                to="/profile"
+                className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
+              >
+                <User className="h-4 w-4" />
+                <span className="hidden md:inline">Profile</span>
+              </Link>
+              <button
+                onClick={signOut}
+                className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
+              >
+                <LogOut className="h-4 w-4" />
+                <span className="hidden md:inline">Sign Out</span>
+              </button>
+            </>
+          ) : (
+            <Link
+              to="/auth"
+              className="text-sm font-medium text-primary hover:underline"
+            >
+              Sign In
+            </Link>
           )}
-        </button>
+          <button
+            onClick={() => setIsOpen(true)}
+            className="relative flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-full font-medium text-sm hover:opacity-90 transition-opacity"
+          >
+            <ShoppingBag className="h-4 w-4" />
+            <span>Cart</span>
+            {itemCount > 0 && (
+              <span className="absolute -top-1.5 -right-1.5 bg-accent text-accent-foreground text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                {itemCount}
+              </span>
+            )}
+          </button>
+        </div>
       </div>
     </nav>
   );
