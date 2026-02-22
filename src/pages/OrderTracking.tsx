@@ -1,7 +1,8 @@
 import { useParams, Link } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { ArrowLeft, CheckCircle2, Clock, ChefHat, Bike, MapPin } from "lucide-react";
+import { ArrowLeft, CheckCircle2, Clock, ChefHat, Bike, MapPin, Home } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/context/AuthContext";
 import { restaurants } from "@/data/restaurants";
 import Navbar from "@/components/Navbar";
 
@@ -22,8 +23,10 @@ const steps = [
 
 const OrderTracking = () => {
   const { id } = useParams();
+  const { user } = useAuth();
   const [order, setOrder] = useState<OrderData | null>(null);
   const [activeStep, setActiveStep] = useState(0);
+  const [deliveryAddress, setDeliveryAddress] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchOrder = async () => {
@@ -31,8 +34,21 @@ const OrderTracking = () => {
       const { data } = await supabase.from("orders").select("*").eq("id", id).single();
       if (data) setOrder(data as OrderData);
     };
+    const fetchAddress = async () => {
+      if (!user) return;
+      const { data } = await supabase
+        .from("delivery_addresses")
+        .select("address_line1, city, state, zip_code")
+        .eq("user_id", user.id)
+        .eq("is_default", true)
+        .maybeSingle();
+      if (data) {
+        setDeliveryAddress(`${data.address_line1}, ${data.city}, ${data.state} ${data.zip_code}`);
+      }
+    };
     fetchOrder();
-  }, [id]);
+    fetchAddress();
+  }, [id, user]);
 
   // Simulate progression through steps
   useEffect(() => {
@@ -49,9 +65,18 @@ const OrderTracking = () => {
   const restaurantId = order?.items?.[0]?.restaurantId;
   const restaurant = restaurants.find((r) => r.id === restaurantId);
 
-  const mapQuery = restaurant
+  const restaurantQuery = restaurant
     ? encodeURIComponent(restaurant.address)
     : encodeURIComponent("New York, NY");
+
+  const deliveryQuery = deliveryAddress
+    ? encodeURIComponent(deliveryAddress)
+    : null;
+
+  // Build map URL: show directions from restaurant to delivery address when on the way
+  const mapSrc = activeStep >= 2 && deliveryQuery
+    ? `https://www.google.com/maps/embed/v1/directions?key=&origin=${restaurantQuery}&destination=${deliveryQuery}`
+    : `https://www.google.com/maps?q=${restaurantQuery}&output=embed`;
 
   if (!order) {
     return (
@@ -132,22 +157,28 @@ const OrderTracking = () => {
           })}
         </div>
 
-        {/* Map */}
-        <div className="rounded-xl overflow-hidden border border-border">
-          <div className="bg-card px-4 py-3 border-b border-border flex items-center gap-2">
-            <MapPin className="h-4 w-4 text-primary" />
-            <span className="text-sm font-medium">
-              {activeStep >= 2 ? "Rider is on the way" : "Restaurant Location"}
-            </span>
+        {/* Locations */}
+        <div className="rounded-xl overflow-hidden border border-border mb-4">
+          <div className="bg-card px-4 py-3 border-b border-border space-y-1">
+            <div className="flex items-center gap-2">
+              <MapPin className="h-4 w-4 text-primary" />
+              <span className="text-sm"><span className="font-medium">Restaurant:</span> {restaurant?.address ?? "Unknown"}</span>
+            </div>
+            {deliveryAddress && (
+              <div className="flex items-center gap-2">
+                <Home className="h-4 w-4 text-primary" />
+                <span className="text-sm"><span className="font-medium">Delivery to:</span> {deliveryAddress}</span>
+              </div>
+            )}
           </div>
           <iframe
-            title="Restaurant Location"
+            title="Delivery Map"
             width="100%"
             height="300"
             style={{ border: 0 }}
             loading="lazy"
             referrerPolicy="no-referrer-when-downgrade"
-            src={`https://www.google.com/maps?q=${mapQuery}&output=embed`}
+            src={`https://www.google.com/maps?q=${restaurantQuery}&output=embed`}
           />
         </div>
 
