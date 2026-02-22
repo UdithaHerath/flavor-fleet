@@ -24,6 +24,9 @@ export interface Restaurant {
   deliveryTime: string;
   deliveryFee: number;
   featured?: boolean;
+  address: string;
+  lat: number;
+  lng: number;
   menu: MenuItem[];
 }
 
@@ -53,6 +56,9 @@ export const restaurants: Restaurant[] = [
     deliveryTime: "20-30 min",
     deliveryFee: 2.99,
     featured: true,
+    address: "230 Park Ave, New York, NY 10169",
+    lat: 40.7527,
+    lng: -73.9772,
     menu: [
       { id: "bb-1", name: "Classic Smash Burger", description: "Double patty with American cheese, lettuce, tomato, special sauce", price: 12.99, image: burgerImg, popular: true },
       { id: "bb-2", name: "Bacon BBQ Burger", description: "Crispy bacon, cheddar, BBQ sauce, onion rings", price: 14.99, image: burgerImg },
@@ -69,6 +75,9 @@ export const restaurants: Restaurant[] = [
     deliveryTime: "25-35 min",
     deliveryFee: 1.99,
     featured: true,
+    address: "45 Rockefeller Plaza, New York, NY 10111",
+    lat: 40.7587,
+    lng: -73.9787,
     menu: [
       { id: "pp-1", name: "Margherita", description: "Fresh mozzarella, basil, San Marzano tomato sauce", price: 14.99, image: pizzaImg, popular: true },
       { id: "pp-2", name: "Pepperoni Supreme", description: "Loaded pepperoni, mozzarella, oregano", price: 16.99, image: pizzaImg },
@@ -84,6 +93,9 @@ export const restaurants: Restaurant[] = [
     rating: 4.8,
     deliveryTime: "30-40 min",
     deliveryFee: 3.99,
+    address: "108 W 44th St, New York, NY 10036",
+    lat: 40.7567,
+    lng: -73.9837,
     menu: [
       { id: "sz-1", name: "Dragon Roll", description: "Eel, avocado, cucumber, unagi sauce", price: 16.99, image: sushiImg, popular: true },
       { id: "sz-2", name: "Salmon Sashimi", description: "12 pieces of fresh Atlantic salmon", price: 19.99, image: sushiImg },
@@ -100,6 +112,9 @@ export const restaurants: Restaurant[] = [
     deliveryTime: "15-25 min",
     deliveryFee: 1.49,
     featured: true,
+    address: "325 W 42nd St, New York, NY 10036",
+    lat: 40.7577,
+    lng: -73.9907,
     menu: [
       { id: "tf-1", name: "Street Tacos (3)", description: "Carne asada, onion, cilantro, salsa verde", price: 11.99, image: tacosImg, popular: true },
       { id: "tf-2", name: "Burrito Bowl", description: "Rice, beans, your choice of protein, pico, guac", price: 13.99, image: tacosImg },
@@ -115,6 +130,9 @@ export const restaurants: Restaurant[] = [
     rating: 4.4,
     deliveryTime: "20-30 min",
     deliveryFee: 2.49,
+    address: "200 Broadway, New York, NY 10038",
+    lat: 40.7107,
+    lng: -74.0077,
     menu: [
       { id: "cs-1", name: "Crispy Chicken Sandwich", description: "Buttermilk fried chicken, pickles, spicy mayo", price: 11.99, image: chickenImg, popular: true },
       { id: "cs-2", name: "Wings (10 pc)", description: "Choice of buffalo, garlic parm, or BBQ", price: 14.99, image: chickenImg },
@@ -130,6 +148,9 @@ export const restaurants: Restaurant[] = [
     rating: 4.6,
     deliveryTime: "25-35 min",
     deliveryFee: 2.99,
+    address: "75 9th Ave, New York, NY 10011",
+    lat: 40.7425,
+    lng: -74.0049,
     menu: [
       { id: "pc-1", name: "Carbonara", description: "Guanciale, egg yolk, pecorino, black pepper", price: 15.99, image: pastaImg, popular: true },
       { id: "pc-2", name: "Truffle Fettuccine", description: "Black truffle cream sauce, parmesan", price: 18.99, image: pastaImg },

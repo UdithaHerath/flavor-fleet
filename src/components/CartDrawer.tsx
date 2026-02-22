@@ -20,20 +20,22 @@ const CartDrawer = () => {
       return;
     }
     setPlacing(true);
-    const { error } = await supabase.from("orders").insert({
+    const { data, error } = await supabase.from("orders").insert({
       user_id: user.id,
       items: JSON.parse(JSON.stringify(items)),
       subtotal: total,
       delivery_fee: 2.99,
       total: total + 2.99,
-    });
+    }).select("id").single();
     setPlacing(false);
     if (error) {
       toast({ title: "Error", description: error.message, variant: "destructive" });
     } else {
+      const orderId = data?.id;
       clearCart();
       setIsOpen(false);
       toast({ title: "Order placed!", description: "Your food is on the way 🎉" });
+      if (orderId) navigate(`/order/${orderId}`);
     }
   };
 
