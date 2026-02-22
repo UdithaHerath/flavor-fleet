@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { MapPin, ShoppingBag, User, LogOut } from "lucide-react";
+import { MapPin, ShoppingBag, User, LogOut, ClipboardList } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
 
@@ -23,6 +23,13 @@ const Navbar = () => {
         <div className="flex items-center gap-3">
           {user ? (
             <>
+              <Link
+                to="/orders"
+                className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
+              >
+                <ClipboardList className="h-4 w-4" />
+                <span className="hidden md:inline">Orders</span>
+              </Link>
               <Link
                 to="/profile"
                 className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
