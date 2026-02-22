@@ -1,11 +1,30 @@
 import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
 import { MapPin, ShoppingBag, User, LogOut, ClipboardList } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
 
 const Navbar = () => {
   const { itemCount, setIsOpen } = useCart();
   const { user, signOut } = useAuth();
+  const [addressLabel, setAddressLabel] = useState("Current Location");
+
+  useEffect(() => {
+    if (!user) { setAddressLabel("Current Location"); return; }
+    const fetchAddr = async () => {
+      const { data } = await supabase
+        .from("delivery_addresses")
+        .select("label, address_line1, city")
+        .eq("user_id", user.id)
+        .eq("is_default", true)
+        .maybeSingle();
+      if (data) {
+        setAddressLabel(`${data.address_line1}, ${data.city}`);
+      }
+    };
+    fetchAddr();
+  }, [user]);
 
   return (
     <nav className="sticky top-0 z-50 bg-background/90 backdrop-blur-md border-b border-border">
@@ -14,10 +33,10 @@ const Navbar = () => {
           <span className="text-2xl font-display font-bold text-gradient">BiteBolt</span>
         </Link>
 
-        <div className="hidden md:flex items-center gap-2 text-sm text-muted-foreground">
-          <MapPin className="h-4 w-4 text-primary" />
-          <span>Delivering to</span>
-          <span className="font-medium text-foreground">Current Location</span>
+        <div className="hidden md:flex items-center gap-2 text-sm text-muted-foreground max-w-xs">
+          <MapPin className="h-4 w-4 text-primary flex-shrink-0" />
+          <span className="flex-shrink-0">Delivering to</span>
+          <span className="font-medium text-foreground truncate">{addressLabel}</span>
         </div>
 
         <div className="flex items-center gap-3">
