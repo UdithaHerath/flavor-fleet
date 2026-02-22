@@ -8,6 +8,7 @@ import { AuthProvider } from "@/context/AuthContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import Index from "./pages/Index";
 import RestaurantDetail from "./pages/RestaurantDetail";
+import OrderTracking from "./pages/OrderTracking";
 import Auth from "./pages/Auth";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
@@ -30,6 +31,7 @@ const App = () => (
               <Route path="/forgot-password" element={<ForgotPassword />} />
               <Route path="/reset-password" element={<ResetPassword />} />
               <Route path="/restaurant/:id" element={<RestaurantDetail />} />
+              <Route path="/order/:id" element={<OrderTracking />} />
               <Route
                 path="/profile"
                 element={
